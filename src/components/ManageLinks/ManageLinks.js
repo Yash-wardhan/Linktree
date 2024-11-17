@@ -6,10 +6,12 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function ManageLinks({ userId, existingLinks, existingBio }) {
   const [links, setLinks] = useState(existingLinks || []);
-  const [bio, setBio] = useState(existingBio || ""); // Track the bio
+  const [bio, setBio] = useState(existingBio || "");
   const [newLink, setNewLink] = useState({ title: "", url: "" });
   const [error, setError] = useState("");
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false); // Track unsaved changes
+  const [isSavingLinks, setIsSavingLinks] = useState(false);
+  const [isSavingBio, setIsSavingBio] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Handle adding a new link
   const handleAddLink = () => {
@@ -28,6 +30,11 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
       return;
     }
 
+    if (links.some((link) => link.url === newLink.url)) {
+      toast.error("This link already exists.");
+      return;
+    }
+
     setLinks([...links, { ...newLink, id: Date.now().toString() }]); // Generate a temporary ID
     setNewLink({ title: "", url: "" });
     setHasUnsavedChanges(true); // Mark as unsaved
@@ -43,6 +50,13 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
 
   // Handle saving links
   const handleSaveLinks = async () => {
+    if (!links.length) {
+      toast.error("You must add at least one link before saving.");
+      return;
+    }
+
+    setIsSavingLinks(true);
+
     try {
       const res = await fetch("/api/users/update-links", {
         method: "PUT",
@@ -61,11 +75,20 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
     } catch (error) {
       console.error("Error saving links:", error.message);
       toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsSavingLinks(false);
     }
   };
 
   // Handle saving bio
   const handleSaveBio = async () => {
+    if (!bio.trim()) {
+      toast.error("Bio cannot be empty.");
+      return;
+    }
+
+    setIsSavingBio(true);
+
     try {
       const res = await fetch("/api/users/update-bio", {
         method: "PUT",
@@ -83,6 +106,8 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
     } catch (error) {
       console.error("Error saving bio:", error.message);
       toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsSavingBio(false);
     }
   };
 
@@ -108,12 +133,18 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
           placeholder="Write a short bio about yourself"
           className="border p-2 rounded w-full"
           rows={4}
+          disabled={isSavingBio}
         />
         <button
           onClick={handleSaveBio}
-          className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          disabled={isSavingBio}
+          className={`mt-2 px-4 py-2 rounded ${
+            isSavingBio
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-600"
+          }`}
         >
-          Save Bio
+          {isSavingBio ? "Saving..." : "Save Bio"}
         </button>
       </div>
 
@@ -168,13 +199,14 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
 
       <button
         onClick={handleSaveLinks}
+        disabled={!hasUnsavedChanges || isSavingLinks}
         className={`px-4 py-2 rounded ${
           hasUnsavedChanges
             ? "bg-yellow-500 hover:bg-yellow-600 text-black"
-            : "bg-blue-500 hover:bg-blue-600 text-white"
-        }`}
+            : "bg-blue-500 text-white"
+        } ${isSavingLinks ? "cursor-not-allowed" : ""}`}
       >
-        {hasUnsavedChanges ? "Save Changes" : "Saved"}
+        {isSavingLinks ? "Saving..." : hasUnsavedChanges ? "Save Changes" : "Saved"}
       </button>
 
       {/* Toast Container */}

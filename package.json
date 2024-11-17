@@ -13,6 +13,7 @@
     "gsap": "^3.12.5",
     "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.2",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.460.0",
     "mongoose": "^8.8.1",
     "next": "15.0.3",

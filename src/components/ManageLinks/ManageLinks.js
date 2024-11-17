@@ -172,7 +172,7 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
       ))}
 
       {links.length < 4 && (
-        <div className="flex items-center space-x-2 mb-4">
+        <div className="flex items-start justify-start md:items-center flex-col md:flex-row md:space-x-2 mb-4">
           <input
             type="text"
             placeholder="Link Title"

@@ -73,7 +73,7 @@ export default function DashboardClient({ user }) {
         <h1 className="text-4xl font-bold text-left mb-6 text-gray-800">
           Dashboard
         </h1>
-        <div className="mb-6 text-left flex justify-between">
+        <div className="mb-6 text-left flex flex-col md:justify-between md:flex-row">
           <div className="flex flex-col gap-2">
             <h2 className="text-2xl font-semibold text-gray-700">
               Welcome, {userData.name}!
@@ -98,7 +98,7 @@ export default function DashboardClient({ user }) {
                 <span className="text-gray-500">No URL set yet</span>
               )}
             </div>
-            <div className="text-center">
+            <div className="text-left md:text-center">
               <button
                 onClick={handleSignOut}
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"

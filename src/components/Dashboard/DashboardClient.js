@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import SetCustomUrl from "@/components/Dashboard/SetCustomUrl";
 import ManageLinks from "@/components/ManageLinks/ManageLinks";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function DashboardClient({ user }) {
   const [userData, setUserData] = useState(user); // Local state for user data
@@ -66,6 +65,10 @@ export default function DashboardClient({ user }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-6">
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-8">
         <h1 className="text-4xl font-bold text-left mb-6 text-gray-800">
           Dashboard
@@ -113,7 +116,7 @@ export default function DashboardClient({ user }) {
           </h3>
           <SetCustomUrl
             userId={userData.id}
-            existingUrl={userData.userurl}
+            existingUrl={userData.userurl || ""}
             onUrlChange={handleUrlChange}
           />
         </div>
@@ -126,7 +129,7 @@ export default function DashboardClient({ user }) {
             </h3>
             <ManageLinks
               userId={userData.id}
-              existingLinks={userData.links}
+              existingLinks={userData.links || []}
               onLinksUpdate={handleLinksUpdate}
             />
           </div>
@@ -139,17 +142,6 @@ export default function DashboardClient({ user }) {
           </div>
         )}
       </div>
-
-      {/* Toast Notification */}
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="colored"
-      />
     </div>
   );
 }

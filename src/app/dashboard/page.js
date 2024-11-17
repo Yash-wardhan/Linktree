@@ -1,16 +1,16 @@
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
-import connectMongo from "@/lib/mongodb";
-import User from "@/models/User.model";
-import DashboardClient from "@/components/Dashboard/DashboardClient";
-import { redirect } from "next/navigation";
+import { cookies } from 'next/headers';
+import jwt from 'jsonwebtoken';
+import connectMongo from '@/lib/mongodb';
+import User from '@/models/User.model';
+import DashboardClient from '@/components/Dashboard/DashboardClient';
+import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
   const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = cookieStore.get('token')?.value;
 
   if (!token) {
-    redirect("/login");
+    return redirect('/login');
   }
 
   try {
@@ -21,7 +21,7 @@ export default async function DashboardPage() {
     const user = await User.findById(decoded.id).lean();
 
     if (!user) {
-      redirect("/login");
+      return redirect('/login');
     }
 
     // Serialize the user data to ensure compatibility with Client Components
@@ -29,7 +29,7 @@ export default async function DashboardPage() {
       id: user._id.toString(),
       name: user.name,
       email: user.email,
-      userurl: user.userurl || "",
+      userurl: user.userurl || '',
       links: user.links.map((link) => ({
         title: link.title,
         url: link.url,
@@ -37,9 +37,11 @@ export default async function DashboardPage() {
       })),
     };
 
-    return <DashboardClient user={serializedUser} />;
+    return <div>
+        <DashboardClient user={serializedUser} />;
+    </div>
   } catch (error) {
-    console.error("Error decoding token or fetching user:", error.message);
-    redirect("/login");
+    console.error('Error decoding token or fetching user:', error.message);
+    return redirect('/login');
   }
 }

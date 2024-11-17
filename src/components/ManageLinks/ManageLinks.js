@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import toast, { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function ManageLinks({ userId, existingLinks, existingBio }) {
@@ -138,11 +138,10 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
         <button
           onClick={handleSaveBio}
           disabled={isSavingBio}
-          className={`mt-2 px-4 py-2 rounded ${
-            isSavingBio
+          className={`mt-2 px-4 py-2 rounded ${isSavingBio
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 text-white hover:bg-blue-600"
-          }`}
+            }`}
         >
           {isSavingBio ? "Saving..." : "Save Bio"}
         </button>
@@ -200,24 +199,18 @@ export default function ManageLinks({ userId, existingLinks, existingBio }) {
       <button
         onClick={handleSaveLinks}
         disabled={!hasUnsavedChanges || isSavingLinks}
-        className={`px-4 py-2 rounded ${
-          hasUnsavedChanges
+        className={`px-4 py-2 rounded ${hasUnsavedChanges
             ? "bg-yellow-500 hover:bg-yellow-600 text-black"
             : "bg-blue-500 text-white"
-        } ${isSavingLinks ? "cursor-not-allowed" : ""}`}
+          } ${isSavingLinks ? "cursor-not-allowed" : ""}`}
       >
         {isSavingLinks ? "Saving..." : hasUnsavedChanges ? "Save Changes" : "Saved"}
       </button>
 
       {/* Toast Container */}
-      <ToastContainer
+      <Toaster
         position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="colored"
+        reverseOrder={false}
       />
     </div>
   );
